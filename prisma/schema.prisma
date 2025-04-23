@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model commandes {
+  id_commande    BigInt          @id @default(autoincrement())
+  id_utilisateur BigInt
+  date_commande  DateTime        @default(now()) @db.Timestamp(6)
+  statut         statut_commande @default(en_attente)
+  id_stock       BigInt
+  quantite       BigInt
+  stocks         stocks          @relation(fields: [id_stock], references: [id_stock], onDelete: SetNull)
+  utilisateurs   utilisateurs    @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: SetNull)
+  mouvements     mouvements[]
+}
+
+model mouvements {
+  id_mouvement   BigInt              @id @default(autoincrement())
+  id_stock       BigInt
+  type_mouvement type_mouvement_enum
+  quantite       BigInt
+  date_mouvement DateTime            @default(now()) @db.Timestamp(6)
+  id_commande    BigInt
+  commandes      commandes           @relation(fields: [id_commande], references: [id_commande], onDelete: SetNull)
+  stocks         stocks              @relation(fields: [id_stock], references: [id_stock], onDelete: SetNull)
+}
+
+model roles {
+  id_role      BigInt         @id @default(autoincrement())
+  nom_role     String         @db.VarChar(50)
+  utilisateurs utilisateurs[]
+}
+
+model stocks {
+  id_stock            BigInt       @id @default(autoincrement())
+  nom                 String       @db.VarChar(255)
+  description         String       @db.VarChar(255)
+  quantite_disponible BigInt
+  type                stock_type
+  commandes           commandes[]
+  mouvements          mouvements[]
+}
+
+model utilisateurs {
+  id_utilisateur BigInt      @id @default(autoincrement())
+  nom            String      @db.VarChar(255)
+  prenom         String      @db.VarChar(255)
+  email          String      @unique @db.VarChar(255)
+  mot_de_passe   String      @db.VarChar(255)
+  id_role        BigInt
+  commandes      commandes[]
+  roles          roles       @relation(fields: [id_role], references: [id_role], onDelete: SetNull)
+}
+
+enum statut_commande {
+  en_attente
+  validee
+  invalidee
+}
+
+enum stock_type {
+  medicament
+  materiel
+}
+
+enum type_mouvement_enum {
+  entree
+  sortie
+}
