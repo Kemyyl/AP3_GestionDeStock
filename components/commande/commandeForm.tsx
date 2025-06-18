@@ -109,14 +109,19 @@ export function CommandeForm({
                       <SelectValue placeholder="Sélectionnez un stock" />
                     </SelectTrigger>
                     <SelectContent>
-                      {stocks.map((stock) => (
-                        <SelectItem
-                          key={stock.id_stock}
-                          value={stock.id_stock.toString()}
-                        >
-                          {stock.nom}
-                        </SelectItem>
-                      ))}
+                      {stocks.map((stock) => {
+                        const isLow = stock.quantite_disponible <= stock.stock_alerte;
+
+                        return (
+                          <SelectItem
+                            key={stock.id_stock}
+                            value={stock.id_stock.toString()}
+                            disabled={isLow}
+                          >
+                            {stock.nom}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 )}
