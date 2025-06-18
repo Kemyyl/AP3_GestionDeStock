@@ -42,6 +42,7 @@ model stocks {
   nom                 String       @db.VarChar(255)
   description         String       @db.VarChar(255)
   quantite_disponible BigInt
+  stock_alerte        BigInt      @default(0)
   type                stock_type
   commandes           commandes[]
   mouvements          mouvements[]

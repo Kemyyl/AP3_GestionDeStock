@@ -19,6 +19,9 @@ export const StockFormSchema = z.object({
     description: z.string({
         message: "Veuillez entre une description.",
     }),
+    stock_alerte: z
+        .number({ invalid_type_error: "Veuillez entrer un nombre." })
+        .min(0, { message: "Le stock d'alerte doit être supérieur ou égal à 0." }),
 });
 
 export function StockForm({
@@ -32,6 +35,7 @@ export function StockForm({
             type: "",
             nom: "",
             description: "",
+            stock_alerte: 0, // Valeur par défaut pour le seuil d'alerte
         },
     });
 
@@ -103,6 +107,26 @@ export function StockForm({
                         </FormItem>
                     )}
                 />
+                <FormField
+                    control={form.control}
+                    name="stock_alerte"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                            <FormLabel>Seuil d'alerte</FormLabel>
+                            <Input
+                                type="number"
+                                {...field}
+                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                min={0}
+                            />
+                            <FormDescription>
+                                Indiquez la quantité minimale avant alerte.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
                 <Button type="submit">Soumettre</Button>
             </form>
         </Form>

@@ -14,6 +14,7 @@ export interface SerializedStocks {
   nom: string;
   description: string;
   quantite_disponible: number;
+  stock_alerte: number;
   type: type;
 }
 
@@ -39,6 +40,7 @@ export async function CreateStocks(data: {
         nom: data.nom,
         description: data.description,
         quantite_disponible: parseInt("0", 10),
+        stock_alerte: 5,
         type: data.type,
       },
     });

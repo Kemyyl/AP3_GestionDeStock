@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { stocks } from "@prisma/client";
-import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell,} from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell, } from "@/components/ui/table";
 
 export type StocksWithRelations = stocks & {
   stocks: stocks
@@ -43,15 +43,28 @@ const stockList = forwardRef<StockListRef>((_, ref) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {stocks?.map((stocks) => (
-          <TableRow key={stocks.id_stock}>
-            <TableCell>{stocks.nom}</TableCell>
-            <TableCell>{stocks.description}</TableCell>
-            <TableCell>{stocks.quantite_disponible}</TableCell>
-            <TableCell>{stocks.type}</TableCell>
-          </TableRow>
-        ))}
+        {stocks?.map((stock) => {
+          const isLow = stock.quantite_disponible <= stock.stock_alerte;
+
+          return (
+            <TableRow
+              key={stock.id_stock}
+              className={isLow ? "bg-red-100 text-red-700 font-semibold" : ""}
+            >
+              <TableCell>{stock.nom}</TableCell>
+              <TableCell>{stock.description}</TableCell>
+              <TableCell>
+                {stock.quantite_disponible}
+                {isLow && (
+                  <span className="ml-2 text-xs text-red-600">(Stock bas)</span>
+                )}
+              </TableCell>
+              <TableCell>{stock.type}</TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
+
     </Table>
   );
 });
